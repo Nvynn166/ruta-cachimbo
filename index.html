@@ -204,6 +204,36 @@
   .course footer { font-size: 12.5px; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 10px; }
   .empty { padding: 30px; text-align: center; color: var(--ink-2); }
 
+  /* Selector de facultad y escuela */
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 18px; font-size: 14.5px; }
+  .crumbs button { border: 0; background: none; color: var(--brand); font-weight: 600; padding: 4px 2px; }
+  .crumbs button:hover { text-decoration: underline; }
+  .crumbs span.sep { color: var(--ink-2); }
+  .crumbs span.cur { color: var(--ink); font-weight: 600; }
+  .finder { display: flex; align-items: center; gap: 10px; padding: 4px 6px 4px 16px; margin-bottom: 18px; max-width: 520px; }
+  .finder svg { width: 20px; height: 20px; color: var(--ink-2); flex: none; }
+  .finder input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; color: var(--ink); padding: 11px 0; min-width: 0; }
+  .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .pick {
+    display: flex; align-items: center; gap: 14px; text-align: left; width: 100%;
+    padding: 16px 18px; color: var(--ink); transition: transform .15s ease, border-color .15s ease;
+  }
+  .pick:hover { transform: translateY(-2px); border-color: var(--brand); }
+  .pick .ab {
+    min-width: 44px; height: 44px; padding: 0 8px; border-radius: 12px; background: var(--brand-soft); color: var(--brand);
+    display: grid; place-items: center; font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 13px; flex: none;
+  }
+  .pick .ab svg { width: 22px; height: 22px; }
+  .pick small { display: block; line-height: 1.35; margin-top: 2px; }
+  .pick b { display: block; font-size: 15.5px; line-height: 1.3; }
+  .pick small { color: var(--ink-2); font-size: 13px; }
+  .pick .go { margin-left: auto; color: var(--ink-2); flex: none; }
+  .pick .go svg { width: 18px; height: 18px; display: block; }
+  .group-title { font-size: 14px; font-weight: 600; color: var(--ink-2); margin: 22px 0 10px; }
+  .esc-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .esc-head h3 { font-size: 24px; }
+  .esc-head p { margin: 4px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
   /* Trámites */
   .guides { display: grid; gap: 14px; }
   details.guide { padding: 0; overflow: hidden; }
@@ -331,7 +361,7 @@
         <p>Material de estudio, guías de trámites, servicios del campus y apoyo académico, reunidos y actualizados por las bases de cada escuela antes de retirarse.</p>
         <label class="search" for="q">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input id="q" type="search" placeholder="Busca: matrícula, comedor, Cálculo…" autocomplete="off">
+          <input id="q" type="search" placeholder="Busca: matrícula, comedor, tu escuela…" autocomplete="off">
         </label>
         <div class="results" id="results" aria-live="polite"></div>
       </div>
@@ -381,21 +411,10 @@
     <div class="page-head">
       <span class="eyebrow">Eje 1</span>
       <h2 id="t-acad">Banco de material de estudio</h2>
-      <p>Prácticas, material semanal y evaluaciones de ciclos anteriores, organizados por curso y por profesor. Se comparte con conocimiento de los docentes.</p>
+      <p>Elige tu facultad y tu escuela profesional para ver el material por curso y por profesor, aportado por ciclos anteriores con conocimiento de los docentes.</p>
     </div>
-    <div class="filters" role="group" aria-label="Filtrar material">
-      <select class="chip" id="f-escuela" aria-label="Escuela">
-        <option value="todas">Todas las escuelas</option>
-        <option value="sistemas">Ing. de Sistemas</option>
-        <option value="software">Ing. de Software</option>
-        <option value="general">Estudios Generales</option>
-      </select>
-      <button class="chip" data-tipo="todos" aria-pressed="true">Todo</button>
-      <button class="chip" data-tipo="practicas" aria-pressed="false">Prácticas</button>
-      <button class="chip" data-tipo="semanal" aria-pressed="false">Material semanal</button>
-      <button class="chip" data-tipo="examenes" aria-pressed="false">Exámenes anteriores</button>
-    </div>
-    <div class="courses" id="courses"></div>
+    <nav class="crumbs" id="crumbs" aria-label="Ruta de navegación"></nav>
+    <div id="acad"></div>
   </section>
 
   <!-- TRÁMITES -->
@@ -495,20 +514,47 @@
 
 <script>
 /* ===== Datos de ejemplo (editar aquí) ===== */
-const CURSOS = [
-  { curso: "Cálculo I", profesor: "Docente A", escuela: "general",
-    archivos: [["practicas","Prácticas calificadas",6],["semanal","Diapositivas por semana",14],["examenes","Parciales y finales anteriores",4]] },
-  { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", escuela: "general",
-    archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] },
-  { curso: "Introducción a la Programación", profesor: "Docente C", escuela: "sistemas",
-    archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",20],["examenes","Exámenes de aplazados",2]] },
-  { curso: "Fundamentos de Software", profesor: "Docente D", escuela: "software",
-    archivos: [["semanal","Lecturas y material de clase",10],["practicas","Trabajos de ciclos anteriores",5]] },
-  { curso: "Redacción y Comunicación", profesor: "Docente E", escuela: "general",
-    archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] },
-  { curso: "Física I", profesor: "Docente F", escuela: "sistemas",
-    archivos: [["practicas","Problemas resueltos",15],["examenes","Parciales anteriores",3]] }
+const FACULTADES = [
+  { id: "fisi", sigla: "FISI", nombre: "Ingeniería de Sistemas e Informática", escuelas: ["Ingeniería de Sistemas", "Ingeniería de Software", "Ciencia de la Computación"] },
+  { id: "fiee", sigla: "FIEE", nombre: "Ingeniería Electrónica y Eléctrica", escuelas: ["Ingeniería Electrónica", "Ingeniería Eléctrica", "Ingeniería de Telecomunicaciones", "Ingeniería Biomédica"] },
+  { id: "fii", sigla: "FII", nombre: "Ingeniería Industrial", escuelas: ["Ingeniería Industrial", "Ingeniería Textil y Confecciones", "Ingeniería de Seguridad y Salud en el Trabajo"] },
+  { id: "figmmg", sigla: "FIGMMG", nombre: "Ingeniería Geológica, Minera, Metalúrgica y Geográfica", escuelas: ["Ingeniería Geológica", "Ingeniería de Minas", "Ingeniería Metalúrgica", "Ingeniería Geográfica", "Ingeniería Civil", "Ingeniería Ambiental"] },
+  { id: "fqiq", sigla: "FQIQ", nombre: "Química e Ingeniería Química", escuelas: ["Química", "Ingeniería Química", "Ingeniería Agroindustrial"] },
+  { id: "fcm", sigla: "FCM", nombre: "Ciencias Matemáticas", escuelas: ["Matemática", "Estadística", "Investigación Operativa", "Computación Científica"] },
+  { id: "fcf", sigla: "FCF", nombre: "Ciencias Físicas", escuelas: ["Física", "Ingeniería Mecánica de Fluidos"] },
+  { id: "fcb", sigla: "FCB", nombre: "Ciencias Biológicas", escuelas: ["Ciencias Biológicas", "Genética y Biotecnología", "Microbiología y Parasitología"] },
+  { id: "fm", sigla: "FM", nombre: "Medicina", escuelas: ["Medicina Humana", "Enfermería", "Obstetricia", "Nutrición", "Tecnología Médica"] },
+  { id: "ffb", sigla: "FFB", nombre: "Farmacia y Bioquímica", escuelas: ["Farmacia y Bioquímica", "Ciencia de los Alimentos", "Toxicología"] },
+  { id: "fo", sigla: "FO", nombre: "Odontología", escuelas: ["Odontología"] },
+  { id: "fmv", sigla: "FMV", nombre: "Medicina Veterinaria", escuelas: ["Medicina Veterinaria"] },
+  { id: "fpsi", sigla: "FPSI", nombre: "Psicología", escuelas: ["Psicología", "Psicología Organizacional y de la Gestión Humana"] },
+  { id: "fca", sigla: "FCA", nombre: "Ciencias Administrativas", escuelas: ["Administración", "Administración de Turismo", "Administración de Negocios Internacionales", "Marketing", "Gastronomía", "Administración de Negocios Marítimos y Portuarios"] },
+  { id: "fcc", sigla: "FCC", nombre: "Ciencias Contables", escuelas: ["Contabilidad", "Gestión Tributaria", "Auditoría Empresarial y del Sector Público"] },
+  { id: "fce", sigla: "FCE", nombre: "Ciencias Económicas", escuelas: ["Economía", "Economía Pública", "Economía Internacional"] },
+  { id: "fcs", sigla: "FCS", nombre: "Ciencias Sociales", escuelas: ["Antropología", "Arqueología", "Geografía", "Historia", "Sociología", "Trabajo Social"] },
+  { id: "fdcp", sigla: "FDCP", nombre: "Derecho y Ciencia Política", escuelas: ["Derecho", "Ciencia Política"] },
+  { id: "fe", sigla: "FE", nombre: "Educación", escuelas: ["Educación Inicial", "Educación Primaria", "Educación Secundaria", "Educación Física"] },
+  { id: "flch", sigla: "FLCH", nombre: "Letras y Ciencias Humanas", escuelas: ["Arte", "Bibliotecología y Ciencias de la Información", "Comunicación Social", "Conservación y Restauración", "Danza", "Filosofía", "Lingüística", "Literatura"] }
 ];
+
+/* Material de ejemplo por escuela. Las escuelas sin datos muestran un aviso. */
+const MATERIAL = {
+  "Ingeniería de Software": [
+    { curso: "Cálculo I", profesor: "Docente A", archivos: [["practicas","Prácticas calificadas",6],["semanal","Diapositivas por semana",14],["examenes","Parciales y finales anteriores",4]] },
+    { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",20],["examenes","Exámenes de aplazados",2]] },
+    { curso: "Redacción y Comunicación", profesor: "Docente D", archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] }
+  ],
+  "Ingeniería de Sistemas": [
+    { curso: "Cálculo I", profesor: "Docente E", archivos: [["practicas","Prácticas calificadas",5],["examenes","Parciales anteriores",3]] },
+    { curso: "Física I", profesor: "Docente F", archivos: [["practicas","Problemas resueltos",15],["examenes","Parciales anteriores",3]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",18]] }
+  ],
+  "Ciencia de la Computación": [
+    { curso: "Matemática Discreta", profesor: "Docente G", archivos: [["semanal","Material de clase",10],["practicas","Ejercicios resueltos",7]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["examenes","Exámenes anteriores",2]] }
+  ]
+};
 
 const GUIAS = [
   { id: "sum", titulo: "Ingresar al SUM por primera vez", desc: "Activa tu cuenta y revisa tus datos.",
@@ -583,12 +629,106 @@ function route() {
 window.addEventListener("hashchange", route);
 
 /* ===== Académico ===== */
-let fTipo = "todos";
-function renderCursos() {
-  const esc = $("#f-escuela").value;
-  const lista = CURSOS
-    .filter(c => esc === "todas" || c.escuela === esc)
-    .map(c => ({ ...c, archivos: c.archivos.filter(a => fTipo === "todos" || a[0] === fTipo) }))
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+const SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+const ESC_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>';
+const acad = { fac: null, esc: null, tipo: "todos", q: "" };
+const facById = id => FACULTADES.find(f => f.id === id);
+
+function goAcad(fac, esc) {
+  acad.fac = fac; acad.esc = esc; acad.tipo = "todos"; acad.q = "";
+  store.set("acad", { fac, esc });
+  renderAcad();
+  if (location.hash !== "#academico") location.hash = "academico";
+  window.scrollTo(0, 0);
+}
+
+function renderCrumbs() {
+  const c = $("#crumbs"), f = acad.fac && facById(acad.fac);
+  if (!f) { c.innerHTML = ""; return; }
+  const parts = [`<button data-nav="root">Facultades</button>`];
+  if (acad.esc) parts.push(`<span class="sep">›</span><button data-nav="fac">${f.sigla}</button><span class="sep">›</span><span class="cur">${acad.esc}</span>`);
+  else parts.push(`<span class="sep">›</span><span class="cur">${f.nombre}</span>`);
+  c.innerHTML = parts.join("");
+  $$("[data-nav]", c).forEach(b => b.addEventListener("click", () =>
+    b.dataset.nav === "root" ? goAcad(null, null) : goAcad(acad.fac, null)));
+}
+
+function renderAcad() {
+  renderCrumbs();
+  const box = $("#acad");
+  const f = acad.fac && facById(acad.fac);
+
+  // Paso 1: elegir facultad
+  if (!f) {
+    box.innerHTML = `
+      <label class="card finder" for="fq">${SEARCH}<input id="fq" type="search" placeholder="Busca tu facultad o escuela…" autocomplete="off" value="${acad.q}"></label>
+      <div id="fac-list"></div>`;
+    const list = () => {
+      const q = norm(acad.q.trim());
+      if (q.length >= 2) {
+        const escs = [];
+        FACULTADES.forEach(fa => fa.escuelas.forEach(e => { if (norm(e).includes(q)) escs.push([fa, e]); }));
+        const facs = FACULTADES.filter(fa => norm(fa.nombre + " " + fa.sigla).includes(q));
+        $("#fac-list").innerHTML =
+          (escs.length ? `<p class="group-title">Escuelas</p><div class="picks">${escs.map(([fa, e]) => pickBtn(ESC_ICO, e, "Facultad de " + fa.nombre, `data-f="${fa.id}" data-e="${e}"`)).join("")}</div>` : "") +
+          (facs.length ? `<p class="group-title">Facultades</p><div class="picks">${facs.map(fa => pickBtn(fa.sigla, fa.nombre, fa.escuelas.length + " escuelas", `data-f="${fa.id}"`)).join("")}</div>` : "") +
+          (!escs.length && !facs.length ? `<div class="card empty">No encontramos esa facultad o escuela.</div>` : "");
+      } else {
+        $("#fac-list").innerHTML = `<p class="group-title">${FACULTADES.length} facultades</p><div class="picks">${
+          FACULTADES.map(fa => pickBtn(fa.sigla, fa.nombre, fa.escuelas.length + (fa.escuelas.length === 1 ? " escuela" : " escuelas"), `data-f="${fa.id}"`)).join("")}</div>`;
+      }
+      $$("#fac-list .pick").forEach(b => b.addEventListener("click", () => goAcad(b.dataset.f, b.dataset.e || null)));
+    };
+    $("#fq").addEventListener("input", e => { acad.q = e.target.value; list(); });
+    list();
+    return;
+  }
+
+  // Paso 2: elegir escuela
+  if (!acad.esc) {
+    box.innerHTML = `
+      <div class="esc-head"><div><h3>Facultad de ${f.nombre}</h3><p>Elige tu escuela profesional.</p></div></div>
+      <div class="picks">${f.escuelas.map(e => {
+        const n = (MATERIAL[e] || []).length;
+        return pickBtn(ESC_ICO, e, n ? n + " cursos con material" : "Sin material aún", `data-e="${e}"`);
+      }).join("")}</div>`;
+    $$("#acad .pick").forEach(b => b.addEventListener("click", () => goAcad(acad.fac, b.dataset.e)));
+    return;
+  }
+
+  // Paso 3: material de la escuela
+  const cursos = MATERIAL[acad.esc] || [];
+  box.innerHTML = `
+    <div class="esc-head">
+      <div><h3>${acad.esc}</h3><p>Material de los cursos de primer ciclo.</p></div>
+      <button class="chip" id="change">Cambiar escuela</button>
+    </div>
+    ${cursos.length ? `<div class="filters" role="group" aria-label="Filtrar por tipo">
+      ${[["todos","Todo"],["practicas","Prácticas"],["semanal","Material semanal"],["examenes","Exámenes anteriores"]]
+        .map(([k, l]) => `<button class="chip" data-tipo="${k}" aria-pressed="${acad.tipo === k}">${l}</button>`).join("")}
+    </div>` : ""}
+    <div class="courses" id="courses"></div>`;
+  $("#change").addEventListener("click", () => goAcad(acad.fac, null));
+  $$("[data-tipo]").forEach(b => b.addEventListener("click", () => {
+    acad.tipo = b.dataset.tipo;
+    $$("[data-tipo]").forEach(x => x.setAttribute("aria-pressed", x === b));
+    renderCursos(cursos);
+  }));
+  renderCursos(cursos);
+}
+
+function pickBtn(ab, title, sub, attrs) {
+  return `<button class="card pick" ${attrs}><span class="ab">${ab}</span><span><b>${title}</b><small>${sub}</small></span><span class="go">${ARROW}</span></button>`;
+}
+
+function renderCursos(cursos) {
+  if (!cursos.length) {
+    $("#courses").innerHTML = `<div class="card empty" style="grid-column:1/-1"><b>Esta escuela aún no tiene material.</b><br>Los delegados de la base anterior lo subirán antes de retirarse.</div>`;
+    return;
+  }
+  const lista = cursos
+    .map(c => ({ ...c, archivos: c.archivos.filter(a => acad.tipo === "todos" || a[0] === acad.tipo) }))
     .filter(c => c.archivos.length);
   $("#courses").innerHTML = lista.length ? lista.map(c => `
     <article class="card course">
@@ -600,14 +740,8 @@ function renderCursos() {
         ${c.archivos.map(a => `<li>${ICONS.file}<span>${a[1]}</span><span class="n">${a[2]}</span></li>`).join("")}
       </ul>
       <footer>Aportado por la base anterior · Actualizado este ciclo</footer>
-    </article>`).join("") : `<div class="card empty" style="grid-column:1/-1">No hay material con esos filtros.</div>`;
+    </article>`).join("") : `<div class="card empty" style="grid-column:1/-1">No hay material de ese tipo.</div>`;
 }
-$("#f-escuela").addEventListener("change", renderCursos);
-$$("[data-tipo]").forEach(b => b.addEventListener("click", () => {
-  fTipo = b.dataset.tipo;
-  $$("[data-tipo]").forEach(x => x.setAttribute("aria-pressed", x === b));
-  renderCursos();
-}));
 
 /* ===== Trámites ===== */
 function renderGuias() {
@@ -680,7 +814,7 @@ function renderSesiones() {
 
 /* ===== Buscador ===== */
 const INDICE = [
-  ...CURSOS.map(c => ({ t: c.curso, s: c.profesor, tag: "Académico", href: "#academico" })),
+  ...FACULTADES.flatMap(f => f.escuelas.map(e => ({ t: e, s: "Facultad de " + f.nombre, tag: "Académico", href: "#academico", fac: f.id, esc: e }))),
   ...GUIAS.map(g => ({ t: g.titulo, s: g.desc, tag: "Trámites", href: "#tramites", open: "g-" + g.id })),
   ...SERVICIOS.map(s => ({ t: s.titulo, s: s.texto.slice(0, 60) + "…", tag: "Campus", href: "#campus", sel: s.id })),
   ...SESIONES.map(s => ({ t: "Reforzamiento: " + s.curso, s: s.tema, tag: "Comunidad", href: "#comunidad" }))
@@ -700,12 +834,14 @@ $("#q").addEventListener("input", e => {
     setTimeout(() => {
       if (h.open) { const d = $("#" + h.open); d.open = true; d.scrollIntoView({ behavior: "smooth", block: "center" }); }
       if (h.sel) selectServicio(h.sel);
+      if (h.esc) goAcad(h.fac, h.esc);
     }, 60);
   }));
 });
 
 /* ===== Inicio ===== */
-renderCursos(); renderGuias(); renderServicios(); renderSesiones(); route();
+{ const a = store.get("acad", {}); acad.fac = a.fac || null; acad.esc = a.esc || null; }
+renderAcad(); renderGuias(); renderServicios(); renderSesiones(); route();
 </script>
 </body>
 </html>
