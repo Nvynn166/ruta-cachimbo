@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruta Cachimbo · Prototipo</title>
+<meta name="description" content="Prototipo de plataforma de acompañamiento para ingresantes de la UNMSM. Proyecto académico del grupo 6.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf6f1;
+    --surface: #ffffff;
+    --surface-2: #f3ece3;
+    --ink: #1f1a17;
+    --ink-2: #5c534c;
+    --line: #e6ddd2;
+    --brand: #8a2432;
+    --brand-ink: #ffffff;
+    --brand-soft: #f6e4e3;
+    --accent: #e0a526;
+    --ok: #2f7a4f;
+    --ok-soft: #e3f1e8;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(31,26,23,.06), 0 6px 20px rgba(31,26,23,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171312;
+      --surface: #211c1a;
+      --surface-2: #2b2522;
+      --ink: #f3ece6;
+      --ink-2: #b8ada4;
+      --line: #3a322e;
+      --brand: #e0707c;
+      --brand-ink: #1a1110;
+      --brand-soft: #3a2224;
+      --accent: #f0be50;
+      --ok: #6cc596;
+      --ok-soft: #1e3328;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: "Bricolage Grotesque", "Inter", sans-serif; line-height: 1.15; margin: 0; }
+  a { color: var(--brand); }
+  button { font: inherit; cursor: pointer; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+  /* Aviso de prototipo */
+  .notice {
+    background: var(--ink); color: var(--bg);
+    font-size: 13px; text-align: center; padding: 8px 16px;
+  }
+
+  /* Encabezado */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar { display: flex; align-items: center; gap: 16px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .logo-mark {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--brand);
+    display: grid; place-items: center;
+  }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo b { font-family: "Bricolage Grotesque", sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+  nav.tabs { display: flex; gap: 4px; margin-left: auto; }
+  nav.tabs a {
+    text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: 15px;
+    padding: 8px 14px; border-radius: 999px;
+  }
+  nav.tabs a:hover { background: var(--surface-2); color: var(--ink); }
+  nav.tabs a[aria-current="page"] { background: var(--brand); color: var(--brand-ink); }
+
+  /* Navegación inferior en móvil */
+  nav.bottom { display: none; }
+  @media (max-width: 760px) {
+    nav.tabs { display: none; }
+    nav.bottom {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+      background: var(--surface); border-top: 1px solid var(--line);
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    }
+    nav.bottom a {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      text-decoration: none; color: var(--ink-2); font-size: 11px; font-weight: 500;
+      padding: 6px 2px; border-radius: 10px;
+    }
+    nav.bottom a svg { width: 22px; height: 22px; }
+    nav.bottom a[aria-current="page"] { color: var(--brand); }
+    main { padding-bottom: 90px; }
+  }
+
+  main { padding-top: 28px; padding-bottom: 48px; }
+  section.view { display: none; animation: fade .25s ease; }
+  section.view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+  .page-head { margin-bottom: 24px; }
+  .page-head h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -.02em; margin: 6px 0 8px; }
+  .page-head p { color: var(--ink-2); margin: 0; max-width: 640px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+
+  /* Inicio */
+  .hero {
+    display: grid; grid-template-columns: 1.2fr .8fr; gap: 24px; align-items: center;
+    padding: 36px; margin-bottom: 28px; overflow: hidden; position: relative;
+    background: var(--brand); color: var(--brand-ink); border: 0;
+  }
+  .hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -.03em; }
+  .hero p { font-size: 17px; opacity: .92; margin: 14px 0 22px; max-width: 520px; }
+  .hero .eyebrow { color: var(--accent); }
+  .search {
+    display: flex; align-items: center; gap: 10px; background: var(--surface); color: var(--ink);
+    border-radius: 14px; padding: 6px 6px 6px 16px; max-width: 520px;
+  }
+  .search svg { width: 20px; height: 20px; color: var(--ink-2); flex: none; }
+  .search input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; color: var(--ink); min-width: 0; padding: 10px 0; }
+  .hero-art { justify-self: center; width: 100%; max-width: 280px; }
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding: 26px 20px; }
+    .hero-art { display: none; }
+  }
+  .results { margin-top: 12px; max-width: 520px; display: grid; gap: 8px; }
+  .result {
+    display: flex; gap: 10px; align-items: center; text-align: left; width: 100%;
+    background: var(--surface); color: var(--ink); border: 0; border-radius: 12px; padding: 12px 14px;
+  }
+  .result small { color: var(--ink-2); display: block; }
+  .result .tag { margin-left: auto; }
+
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .grid-4 { grid-template-columns: 1fr; } }
+  .axis {
+    display: block; text-decoration: none; color: var(--ink); padding: 22px;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .axis:hover { transform: translateY(-3px); border-color: var(--brand); }
+  .axis .ico {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--brand-soft); color: var(--brand);
+    display: grid; place-items: center; margin-bottom: 14px;
+  }
+  .axis .ico svg { width: 24px; height: 24px; }
+  .axis h3 { font-size: 19px; margin-bottom: 6px; }
+  .axis p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+
+  .how { margin-top: 28px; padding: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .how h3 { grid-column: 1 / -1; font-size: 22px; }
+  .how .step b { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #1f1a17; font-size: 14px; margin-bottom: 8px; }
+  .how .step p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+  @media (max-width: 760px) { .how { grid-template-columns: 1fr; } }
+
+  /* Filtros */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .chip {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+    padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 500;
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  select.chip { appearance: none; padding-right: 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23887' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; }
+
+  .tag {
+    display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+    background: var(--surface-2); color: var(--ink-2); white-space: nowrap;
+  }
+  .tag.brand { background: var(--brand-soft); color: var(--brand); }
+  .tag.ok { background: var(--ok-soft); color: var(--ok); }
+
+  /* Académico */
+  .courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .course { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .course header { all: unset; display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+  .course h3 { font-size: 18px; }
+  .course .prof { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+  .files { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .files li {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    background: var(--surface-2); border-radius: 10px; font-size: 14px;
+  }
+  .files li svg { width: 18px; height: 18px; color: var(--brand); flex: none; }
+  .files li span.n { margin-left: auto; color: var(--ink-2); font-size: 12.5px; }
+  .course footer { font-size: 12.5px; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 10px; }
+  .empty { padding: 30px; text-align: center; color: var(--ink-2); }
+
+  /* Trámites */
+  .guides { display: grid; gap: 14px; }
+  details.guide { padding: 0; overflow: hidden; }
+  details.guide summary {
+    list-style: none; display: flex; align-items: center; gap: 14px; padding: 20px 22px; cursor: pointer;
+  }
+  details.guide summary::-webkit-details-marker { display: none; }
+  details.guide summary .ico { width: 42px; height: 42px; border-radius: 12px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex: none; }
+  details.guide summary .ico svg { width: 22px; height: 22px; }
+  details.guide summary h3 { font-size: 18px; }
+  details.guide summary p { margin: 2px 0 0; color: var(--ink-2); font-size: 14px; }
+  details.guide summary .prog { margin-left: auto; text-align: right; flex: none; }
+  .meter { width: 90px; height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .meter i { display: block; height: 100%; background: var(--ok); width: 0; transition: width .3s ease; }
+  details.guide[open] summary { border-bottom: 1px solid var(--line); }
+  .steps { list-style: none; margin: 0; padding: 10px 22px 20px; counter-reset: s; }
+  .steps li { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+  .steps li:last-child { border-bottom: 0; }
+  .steps input { width: 20px; height: 20px; accent-color: var(--ok); margin-top: 2px; flex: none; }
+  .steps label { cursor: pointer; }
+  .steps label b { display: block; }
+  .steps label span { color: var(--ink-2); font-size: 14.5px; }
+  .steps input:checked + label b { text-decoration: line-through; color: var(--ink-2); }
+  @media (max-width: 520px) { details.guide summary .prog { display: none; } }
+
+  /* Campus */
+  .campus { display: grid; grid-template-columns: 1.1fr .9fr; gap: 20px; align-items: start; }
+  @media (max-width: 860px) { .campus { grid-template-columns: 1fr; } }
+  .map { padding: 16px; }
+  .map svg { width: 100%; height: auto; display: block; border-radius: 12px; }
+  .map .pin { cursor: pointer; }
+  .map .pin circle.dot { transition: r .15s ease; }
+  .map .pin:hover circle.dot, .map .pin.on circle.dot { r: 11; }
+  .map-cap { font-size: 12.5px; color: var(--ink-2); margin: 10px 4px 0; }
+  .services { display: grid; gap: 12px; }
+  .service { padding: 18px 20px; border-left: 4px solid transparent; transition: border-color .15s; }
+  .service.on { border-left-color: var(--brand); }
+  .service h3 { font-size: 17px; display: flex; align-items: center; gap: 10px; }
+  .service h3 svg { width: 20px; height: 20px; color: var(--brand); }
+  .service p { margin: 6px 0 0; color: var(--ink-2); font-size: 14.5px; }
+  .routes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+  /* Comunidad */
+  .two { display: grid; grid-template-columns: 1.3fr .7fr; gap: 20px; align-items: start; }
+  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+  .sessions { display: grid; gap: 12px; }
+  .session { padding: 18px 20px; display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; }
+  .date { text-align: center; background: var(--surface-2); border-radius: 12px; padding: 8px 0; }
+  .date b { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: 24px; line-height: 1; }
+  .date small { font-size: 12px; color: var(--ink-2); text-transform: uppercase; }
+  .session h3 { font-size: 17px; }
+  .session p { margin: 2px 0 0; color: var(--ink-2); font-size: 14px; }
+  .btn {
+    border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 600; font-size: 14px;
+    background: var(--brand); color: var(--brand-ink); white-space: nowrap;
+  }
+  .btn.done { background: var(--ok-soft); color: var(--ok); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  @media (max-width: 520px) {
+    .session { grid-template-columns: 56px 1fr; }
+    .session .btn { grid-column: 1 / -1; width: 100%; }
+  }
+  .news { padding: 20px; }
+  .news h3 { font-size: 18px; margin-bottom: 12px; }
+  .news ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .news li { padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
+  .news li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .news li b { display: block; font-size: 15px; }
+  .news li span { color: var(--ink-2); font-size: 14px; }
+
+  .help {
+    margin-top: 28px; padding: 22px 24px; display: flex; gap: 16px; align-items: center;
+    background: var(--brand-soft); border-color: transparent; box-shadow: none;
+  }
+  .help svg { width: 32px; height: 32px; color: var(--brand); flex: none; }
+  .help p { margin: 2px 0 0; color: var(--ink-2); font-size: 14.5px; }
+
+  footer.site { border-top: 1px solid var(--line); padding: 24px 0 32px; color: var(--ink-2); font-size: 13.5px; }
+  footer.site .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  @media (max-width: 760px) { footer.site { padding-bottom: 100px; } }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0;
+    background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 12px; font-size: 14px;
+    transition: all .25s ease; pointer-events: none; z-index: 50; max-width: calc(100% - 32px);
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  @media (max-width: 760px) { .toast { bottom: 92px; } }
+
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .pin:focus:not(:focus-visible) { outline: none; }
+  main { padding-top: 36px; }
+</style>
+</head>
+<body>
+
+<div class="notice">Prototipo académico · No es una plataforma oficial de la UNMSM · Los contenidos son de ejemplo</div>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#inicio" aria-label="Ruta Cachimbo, inicio">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+      </span>
+      <b>Ruta Cachimbo</b>
+    </a>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="#inicio">Inicio</a>
+      <a href="#academico">Académico</a>
+      <a href="#tramites">Trámites</a>
+      <a href="#campus">Campus</a>
+      <a href="#comunidad">Comunidad</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- INICIO -->
+  <section class="view" id="view-inicio" aria-labelledby="t-inicio">
+    <div class="card hero">
+      <div>
+        <span class="eyebrow">Tu primer ciclo, sin perderte</span>
+        <h1 id="t-inicio">Todo lo que necesitas saber, en un solo lugar.</h1>
+        <p>Material de estudio, guías de trámites, servicios del campus y apoyo académico, reunidos y actualizados por las bases de cada escuela antes de retirarse.</p>
+        <label class="search" for="q">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Busca: matrícula, comedor, Cálculo…" autocomplete="off">
+        </label>
+        <div class="results" id="results" aria-live="polite"></div>
+      </div>
+      <svg class="hero-art" viewBox="0 0 240 240" aria-hidden="true">
+        <circle cx="120" cy="120" r="100" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+        <circle cx="120" cy="120" r="64" fill="rgba(255,255,255,.12)"/>
+        <path d="M60 180 C 90 150, 80 110, 120 100 S 170 70, 185 50" fill="none" stroke="#e0a526" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+        <circle cx="60" cy="180" r="9" fill="#fff"/>
+        <g transform="translate(185 50)"><path d="M0 -22c-9 0-15 7-15 15 0 11 15 25 15 25s15-14 15-25c0-8-6-15-15-15z" fill="#e0a526"/><circle cy="-8" r="5" fill="#8a2432"/></g>
+        <g transform="translate(120 120)"><circle r="26" fill="#fff"/><path d="m9 -9-5 13-13 5 5-13z" fill="#8a2432"/></g>
+      </svg>
+    </div>
+
+    <div class="grid-4">
+      <a class="card axis" href="#academico">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M8 7h7M8 11h5"/></svg></div>
+        <h3>Académico</h3>
+        <p>Material de estudio por curso y por profesor, compartido por ciclos anteriores.</p>
+      </a>
+      <a class="card axis" href="#tramites">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Trámites</h3>
+        <p>Guías paso a paso para el SUM, la matrícula y otros procesos.</p>
+      </a>
+      <a class="card axis" href="#campus">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+        <h3>Campus y servicios</h3>
+        <p>Mapa, transporte, comedor, bibliotecas y actividades deportivas.</p>
+      </a>
+      <a class="card axis" href="#comunidad">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.7 2.6 3 5.2"/></svg></div>
+        <h3>Apoyo y comunidad</h3>
+        <p>Clases de reforzamiento con reserva de cupo y actividades de integración.</p>
+      </a>
+    </div>
+
+    <div class="card how">
+      <h3>¿Cómo funciona?</h3>
+      <div class="step"><b>1</b><p><strong>La base anterior recopila</strong> lo que aprendió: materiales, guías y datos útiles del campus.</p></div>
+      <div class="step"><b>2</b><p><strong>Lo actualiza en la plataforma</strong> antes de retirarse, con una estructura común para todas las escuelas.</p></div>
+      <div class="step"><b>3</b><p><strong>Los ingresantes lo consultan</strong> cuando surge la duda, durante todo el ciclo y no solo en la inducción.</p></div>
+    </div>
+  </section>
+
+  <!-- ACADÉMICO -->
+  <section class="view" id="view-academico" aria-labelledby="t-acad">
+    <div class="page-head">
+      <span class="eyebrow">Eje 1</span>
+      <h2 id="t-acad">Banco de material de estudio</h2>
+      <p>Prácticas, material semanal y evaluaciones de ciclos anteriores, organizados por curso y por profesor. Se comparte con conocimiento de los docentes.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filtrar material">
+      <select class="chip" id="f-escuela" aria-label="Escuela">
+        <option value="todas">Todas las escuelas</option>
+        <option value="sistemas">Ing. de Sistemas</option>
+        <option value="software">Ing. de Software</option>
+        <option value="general">Estudios Generales</option>
+      </select>
+      <button class="chip" data-tipo="todos" aria-pressed="true">Todo</button>
+      <button class="chip" data-tipo="practicas" aria-pressed="false">Prácticas</button>
+      <button class="chip" data-tipo="semanal" aria-pressed="false">Material semanal</button>
+      <button class="chip" data-tipo="examenes" aria-pressed="false">Exámenes anteriores</button>
+    </div>
+    <div class="courses" id="courses"></div>
+  </section>
+
+  <!-- TRÁMITES -->
+  <section class="view" id="view-tramites" aria-labelledby="t-tram">
+    <div class="page-head">
+      <span class="eyebrow">Eje 2</span>
+      <h2 id="t-tram">Guías de trámites</h2>
+      <p>Paso a paso, en lenguaje simple. Marca cada paso cuando lo completes; tu avance se guarda en este navegador.</p>
+    </div>
+    <div class="guides" id="guides"></div>
+  </section>
+
+  <!-- CAMPUS -->
+  <section class="view" id="view-campus" aria-labelledby="t-camp">
+    <div class="page-head">
+      <span class="eyebrow">Eje 3</span>
+      <h2 id="t-camp">Campus y servicios</h2>
+      <p>Información práctica sobre los principales servicios de la Ciudad Universitaria. Toca un punto del mapa para ver el servicio.</p>
+    </div>
+    <div class="campus">
+      <div class="card map">
+        <svg viewBox="0 0 400 320" role="img" aria-label="Esquema referencial del campus">
+          <rect width="400" height="320" rx="12" fill="var(--surface-2)"/>
+          <rect x="22" y="22" width="356" height="276" rx="40" fill="none" stroke="var(--line)" stroke-width="10"/>
+          <rect x="22" y="22" width="356" height="276" rx="40" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="3 9"/>
+          <path d="M200 22 V 298 M22 160 H 378" stroke="var(--line)" stroke-width="6"/>
+          <g fill="var(--surface)" stroke="var(--line)">
+            <rect x="60" y="56" width="100" height="70" rx="8"/>
+            <rect x="240" y="56" width="100" height="70" rx="8"/>
+            <rect x="60" y="194" width="100" height="70" rx="8"/>
+            <rect x="240" y="194" width="100" height="70" rx="8"/>
+          </g>
+          <g font-family="Inter, sans-serif" font-size="10" fill="var(--ink-2)">
+            <text x="110" y="116" text-anchor="middle">Biblioteca</text>
+            <text x="290" y="116" text-anchor="middle">Comedor</text>
+            <text x="110" y="254" text-anchor="middle">Deportes</text>
+            <text x="290" y="254" text-anchor="middle">Oficinas</text>
+            <text x="200" y="286" text-anchor="middle">Paradero</text>
+          </g>
+          <g class="pin" data-s="biblioteca" tabindex="0" role="button" aria-label="Biblioteca Central"><circle class="dot" cx="110" cy="84" r="9" fill="var(--brand)"/></g>
+          <g class="pin" data-s="comedor" tabindex="0" role="button" aria-label="Comedor universitario"><circle class="dot" cx="290" cy="84" r="9" fill="var(--brand)"/></g>
+          <g class="pin" data-s="deporte" tabindex="0" role="button" aria-label="Zona deportiva"><circle class="dot" cx="110" cy="228" r="9" fill="var(--brand)"/></g>
+          <g class="pin" data-s="tramites" tabindex="0" role="button" aria-label="Oficinas de trámites"><circle class="dot" cx="290" cy="228" r="9" fill="var(--brand)"/></g>
+          <g class="pin" data-s="transporte" tabindex="0" role="button" aria-label="Paradero de transporte"><circle class="dot" cx="200" cy="298" r="9" fill="var(--accent)"/></g>
+        </svg>
+        <p class="map-cap">Esquema referencial, no a escala. En la versión final se reemplazaría por un mapa real del campus.</p>
+      </div>
+      <div class="services" id="services"></div>
+    </div>
+  </section>
+
+  <!-- COMUNIDAD -->
+  <section class="view" id="view-comunidad" aria-labelledby="t-com">
+    <div class="page-head">
+      <span class="eyebrow">Eje 4</span>
+      <h2 id="t-com">Apoyo académico y comunidad</h2>
+      <p>Clases de reforzamiento organizadas por grupos de ayuda académica. Reserva tu cupo antes de prácticas y exámenes.</p>
+    </div>
+    <div class="two">
+      <div class="sessions" id="sessions"></div>
+      <aside class="card news">
+        <h3>Anuncios</h3>
+        <ul>
+          <li><b>Torneo de integración de cachimbos</b><span>Inscripciones por escuela. Más detalles con tus delegados.</span></li>
+          <li><b>Recorrido guiado por el campus</b><span>Para quienes no pudieron asistir en la inducción.</span></li>
+          <li><b>Convocatoria a equipos deportivos</b><span>Fútbol, vóley, básquet y más. Pregunta en la zona deportiva.</span></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <div class="card help">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 16h.01"/></svg>
+    <div>
+      <strong>¿No encontraste lo que buscabas?</strong>
+      <p>Escribe a los delegados de tu base o propón un tema nuevo para que se agregue en la próxima actualización.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>Ruta Cachimbo · Prototipo del grupo 6 · Aprendizaje Estratégico y Liderazgo</span>
+    <span>Proyecto académico. No representa a la UNMSM.</span>
+  </div>
+</footer>
+
+<nav class="bottom" aria-label="Secciones">
+  <a href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>Inicio</a>
+  <a href="#academico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/></svg>Académico</a>
+  <a href="#tramites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>Trámites</a>
+  <a href="#campus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Campus</a>
+  <a href="#comunidad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/></svg>Comunidad</a>
+</nav>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== Datos de ejemplo (editar aquí) ===== */
+const CURSOS = [
+  { curso: "Cálculo I", profesor: "Docente A", escuela: "general",
+    archivos: [["practicas","Prácticas calificadas",6],["semanal","Diapositivas por semana",14],["examenes","Parciales y finales anteriores",4]] },
+  { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", escuela: "general",
+    archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] },
+  { curso: "Introducción a la Programación", profesor: "Docente C", escuela: "sistemas",
+    archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",20],["examenes","Exámenes de aplazados",2]] },
+  { curso: "Fundamentos de Software", profesor: "Docente D", escuela: "software",
+    archivos: [["semanal","Lecturas y material de clase",10],["practicas","Trabajos de ciclos anteriores",5]] },
+  { curso: "Redacción y Comunicación", profesor: "Docente E", escuela: "general",
+    archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] },
+  { curso: "Física I", profesor: "Docente F", escuela: "sistemas",
+    archivos: [["practicas","Problemas resueltos",15],["examenes","Parciales anteriores",3]] }
+];
+
+const GUIAS = [
+  { id: "sum", titulo: "Ingresar al SUM por primera vez", desc: "Activa tu cuenta y revisa tus datos.",
+    pasos: [["Ten a la mano tu código de estudiante","Lo recibes al completar tu proceso de ingreso."],
+            ["Ingresa al portal del SUM","Usa el enlace oficial que comparte tu facultad."],
+            ["Cambia tu contraseña inicial","Guárdala en un lugar seguro."],
+            ["Revisa tus cursos y horario","Verifica que coincidan con lo que te indicó tu escuela."]] },
+  { id: "matricula", titulo: "Matrícula del siguiente ciclo", desc: "Lo que debes revisar antes y durante la matrícula.",
+    pasos: [["Revisa el calendario académico","Anota las fechas de matrícula de tu escuela."],
+            ["Consulta tus notas finales","Confirma qué cursos aprobaste."],
+            ["Arma tu horario tentativo","Revisa los cursos que te tocan según tu plan de estudios."],
+            ["Matricúlate en las fechas indicadas","Si tienes problemas, acude a la oficina de tu escuela."]] },
+  { id: "sustitutorio", titulo: "Exámenes sustitutorios y de aplazados", desc: "Qué son y cómo se solicitan.",
+    pasos: [["Infórmate de las reglas de tu curso","Cada curso indica en el sílabo si hay sustitutorio."],
+            ["Revisa las fechas publicadas","Suelen anunciarse al final del ciclo."],
+            ["Realiza la solicitud o el pago, si corresponde","Pregunta en tu escuela por el procedimiento vigente."]] }
+];
+
+const SERVICIOS = [
+  { id: "transporte", titulo: "Transporte gratuito", ico: "bus",
+    texto: "El Burrito externo conecta el campus con distintas zonas de Lima, y el Burro recorre el perímetro interno con varios paraderos.",
+    extra: ["Ruta Este","Ruta Oeste","Ruta Norte","Ruta Sur"] },
+  { id: "comedor", titulo: "Comedor universitario", ico: "food",
+    texto: "Es gratuito. Se recoge ticket para desayuno, almuerzo y cena por orden de llegada, así que conviene llegar temprano." },
+  { id: "biblioteca", titulo: "Bibliotecas", ico: "book",
+    texto: "Como la Biblioteca Central Pedro Zulen. Para ingresar necesitas tu carné de biblioteca; aquí se explicaría cómo obtenerlo." },
+  { id: "deporte", titulo: "Deportes y actividades", ico: "ball",
+    texto: "Hay equipos deportivos y actividades estudiantiles a los que puedes unirte para integrarte y conocer gente." },
+  { id: "tramites", titulo: "Oficinas de trámites", ico: "doc",
+    texto: "Ubicación de las oficinas de tu facultad y de los servicios administrativos más consultados." }
+];
+
+const SESIONES = [
+  { id: "s1", dia: "18", mes: "oct", curso: "Cálculo I", tema: "Límites y continuidad", grupo: "Grupo de ayuda académica", cupos: 25 },
+  { id: "s2", dia: "21", mes: "oct", curso: "Introducción a la Programación", tema: "Estructuras repetitivas", grupo: "Grupo de ayuda académica", cupos: 20 },
+  { id: "s3", dia: "24", mes: "oct", curso: "Física I", tema: "Repaso para el parcial", grupo: "Grupo de ayuda académica", cupos: 30 }
+];
+
+/* ===== Utilidades ===== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("rc_" + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("rc_" + k, JSON.stringify(v)); } catch {} }
+};
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2200);
+}
+const ICONS = {
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>',
+  doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
+  bus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="14" rx="3"/><path d="M4 10h16M7 21v-4M17 21v-4"/><circle cx="8" cy="14" r=".5"/><circle cx="16" cy="14" r=".5"/></svg>',
+  food: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 21V3c-2 1-3 4-3 7h3"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2zM22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/></svg>',
+  ball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 1 0 18M3 12h18M5.5 6a12 12 0 0 0 13 0M5.5 18a12 12 0 0 1 13 0"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>'
+};
+const TIPO = { practicas: "Prácticas", semanal: "Material semanal", examenes: "Exámenes anteriores" };
+
+/* ===== Navegación ===== */
+const VIEWS = ["inicio", "academico", "tramites", "campus", "comunidad"];
+function route() {
+  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "inicio";
+  $$("section.view").forEach(s => s.classList.toggle("active", s.id === "view-" + v));
+  $$("nav a").forEach(a => {
+    if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+
+/* ===== Académico ===== */
+let fTipo = "todos";
+function renderCursos() {
+  const esc = $("#f-escuela").value;
+  const lista = CURSOS
+    .filter(c => esc === "todas" || c.escuela === esc)
+    .map(c => ({ ...c, archivos: c.archivos.filter(a => fTipo === "todos" || a[0] === fTipo) }))
+    .filter(c => c.archivos.length);
+  $("#courses").innerHTML = lista.length ? lista.map(c => `
+    <article class="card course">
+      <header>
+        <div><h3>${c.curso}</h3><div class="prof">${c.profesor}</div></div>
+        <span class="tag brand">${c.archivos.reduce((n, a) => n + a[2], 0)} archivos</span>
+      </header>
+      <ul class="files">
+        ${c.archivos.map(a => `<li>${ICONS.file}<span>${a[1]}</span><span class="n">${a[2]}</span></li>`).join("")}
+      </ul>
+      <footer>Aportado por la base anterior · Actualizado este ciclo</footer>
+    </article>`).join("") : `<div class="card empty" style="grid-column:1/-1">No hay material con esos filtros.</div>`;
+}
+$("#f-escuela").addEventListener("change", renderCursos);
+$$("[data-tipo]").forEach(b => b.addEventListener("click", () => {
+  fTipo = b.dataset.tipo;
+  $$("[data-tipo]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderCursos();
+}));
+
+/* ===== Trámites ===== */
+function renderGuias() {
+  const hecho = store.get("pasos", {});
+  $("#guides").innerHTML = GUIAS.map(g => `
+    <details class="card guide" id="g-${g.id}">
+      <summary>
+        <span class="ico">${ICONS.check}</span>
+        <div><h3>${g.titulo}</h3><p>${g.desc}</p></div>
+        <div class="prog"><span class="tag" data-count="${g.id}"></span><div class="meter"><i data-bar="${g.id}"></i></div></div>
+      </summary>
+      <ol class="steps">
+        ${g.pasos.map((p, i) => {
+          const k = g.id + "-" + i;
+          return `<li><input type="checkbox" id="${k}" data-k="${k}" data-g="${g.id}" ${hecho[k] ? "checked" : ""}>
+                  <label for="${k}"><b>${p[0]}</b><span>${p[1]}</span></label></li>`;
+        }).join("")}
+      </ol>
+    </details>`).join("");
+  GUIAS.forEach(g => updateProg(g.id));
+  $$("#guides input").forEach(cb => cb.addEventListener("change", () => {
+    const h = store.get("pasos", {}); h[cb.dataset.k] = cb.checked; store.set("pasos", h);
+    updateProg(cb.dataset.g);
+  }));
+}
+function updateProg(id) {
+  const cbs = $$(`#g-${id} input`), n = cbs.filter(c => c.checked).length;
+  $(`[data-count="${id}"]`).textContent = `${n}/${cbs.length}`;
+  $(`[data-count="${id}"]`).className = "tag" + (n === cbs.length ? " ok" : "");
+  $(`[data-bar="${id}"]`).style.width = (n / cbs.length * 100) + "%";
+}
+
+/* ===== Campus ===== */
+function renderServicios() {
+  $("#services").innerHTML = SERVICIOS.map(s => `
+    <article class="card service" id="s-${s.id}">
+      <h3>${ICONS[s.ico]}${s.titulo}</h3>
+      <p>${s.texto}</p>
+      ${s.extra ? `<div class="routes">${s.extra.map(r => `<span class="tag">${r}</span>`).join("")}<span class="tag brand">Horarios en la versión final</span></div>` : ""}
+    </article>`).join("");
+}
+function selectServicio(id) {
+  $$(".service").forEach(s => s.classList.toggle("on", s.id === "s-" + id));
+  $$(".pin").forEach(p => p.classList.toggle("on", p.dataset.s === id));
+  const el = $("#s-" + id);
+  if (el && window.innerWidth < 860) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+$$(".pin").forEach(p => {
+  p.addEventListener("click", () => selectServicio(p.dataset.s));
+  p.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectServicio(p.dataset.s); } });
+});
+
+/* ===== Comunidad ===== */
+function renderSesiones() {
+  const res = store.get("reservas", {});
+  $("#sessions").innerHTML = SESIONES.map(s => {
+    const ok = !!res[s.id], libres = s.cupos - (ok ? 1 : 0);
+    return `<article class="card session">
+      <div class="date"><b>${s.dia}</b><small>${s.mes}</small></div>
+      <div><h3>${s.curso}</h3><p>${s.tema} · ${s.grupo}</p><p><span class="tag">${libres} cupos libres</span></p></div>
+      <button class="btn ${ok ? "done" : ""}" data-r="${s.id}">${ok ? "✓ Reservado" : "Reservar cupo"}</button>
+    </article>`;
+  }).join("");
+  $$("[data-r]").forEach(b => b.addEventListener("click", () => {
+    const r = store.get("reservas", {}); r[b.dataset.r] = !r[b.dataset.r]; store.set("reservas", r);
+    toast(r[b.dataset.r] ? "Cupo reservado (demo)" : "Reserva cancelada");
+    renderSesiones();
+  }));
+}
+
+/* ===== Buscador ===== */
+const INDICE = [
+  ...CURSOS.map(c => ({ t: c.curso, s: c.profesor, tag: "Académico", href: "#academico" })),
+  ...GUIAS.map(g => ({ t: g.titulo, s: g.desc, tag: "Trámites", href: "#tramites", open: "g-" + g.id })),
+  ...SERVICIOS.map(s => ({ t: s.titulo, s: s.texto.slice(0, 60) + "…", tag: "Campus", href: "#campus", sel: s.id })),
+  ...SESIONES.map(s => ({ t: "Reforzamiento: " + s.curso, s: s.tema, tag: "Comunidad", href: "#comunidad" }))
+];
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+$("#q").addEventListener("input", e => {
+  const q = norm(e.target.value.trim());
+  const box = $("#results");
+  if (q.length < 2) { box.innerHTML = ""; return; }
+  const hits = INDICE.filter(i => norm(i.t + " " + i.s).includes(q)).slice(0, 5);
+  box.innerHTML = hits.length ? hits.map((h, i) =>
+    `<button class="result" data-i="${INDICE.indexOf(h)}"><span><b>${h.t}</b><small>${h.s}</small></span><span class="tag brand">${h.tag}</span></button>`).join("")
+    : `<div class="result"><span>Sin resultados. Prueba con otra palabra.</span></div>`;
+  $$(".result[data-i]").forEach(b => b.addEventListener("click", () => {
+    const h = INDICE[b.dataset.i];
+    location.hash = h.href;
+    setTimeout(() => {
+      if (h.open) { const d = $("#" + h.open); d.open = true; d.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      if (h.sel) selectServicio(h.sel);
+    }, 60);
+  }));
+});
+
+/* ===== Inicio ===== */
+renderCursos(); renderGuias(); renderServicios(); renderSesiones(); route();
+</script>
+</body>
+</html>
