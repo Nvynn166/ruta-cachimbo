@@ -739,13 +739,13 @@
     <div class="page-head">
       <span class="eyebrow" style="color:var(--c-yellow)">Eje 3 🗺️</span>
       <h2 id="t-camp" style="color:var(--c-yellow)">Campus y servicios</h2>
-      <p>Información práctica sobre los principales servicios de la Ciudad Universitaria. Toca un punto del mapa para ver el servicio.</p>
+      <p>Información práctica sobre los principales servicios de la Ciudad Universitaria. Selecciona un servicio de la lista para ver su información.</p>
     </div>
     <div class="campus">
       <div class="card map-panel" id="map-panel">
         <div id="panel-mapa">
           <img src="mapa-campus.png" alt="Mapa del campus UNMSM">
-          <p class="map-cap">Mapa ilustrado referencial de la Ciudad Universitaria · No a escala</p>
+          <p class="map-cap">Mapa ilustrado referencial de la Ciudad Universitaria</p>
         </div>
       </div>
       <div class="services" id="services"></div>
@@ -1139,7 +1139,7 @@ function resetPanelMap() {
   mapPanelContainer.innerHTML = `
     <div id="panel-mapa">
       <img src="mapa-campus.png" alt="Mapa del campus UNMSM">
-      <p class="map-cap">Mapa ilustrado referencial de la Ciudad Universitaria · No a escala</p>
+      <p class="map-cap">Mapa ilustrado referencial de la Ciudad Universitaria</p>
     </div>`;
 }
 
@@ -1255,7 +1255,7 @@ function initMentores() {
   $("#btn-solicitar").addEventListener("click", () => { const esc = $("#ment-escuela").value; if (!esc) { toast("Elige tu escuela primero"); return; } const sol = store.get("mentor-sol", []); sol.push({ escuela: esc, area: $("#ment-area").value, msg: $("#ment-msg").value, fecha: new Date().toISOString() }); store.set("mentor-sol", sol); toast("¡Solicitud enviada!"); $("#form-solicitar").reset(); });
   $("#btn-postular").addEventListener("click", () => { const esc = $("#post-escuela").value, ciclo = $("#post-ciclo").value; if (!esc || !ciclo) { toast("Completa escuela y ciclo"); return; } const posts = store.get("mentor-post", []); posts.push({ escuela: esc, ciclo, motivo: $("#post-motivo").value, fecha: new Date().toISOString() }); store.set("mentor-post", posts); toast("¡Postulación enviada!"); $("#form-postular").reset(); });
   function animStat(id, target, suffix = "") { const el = $("#" + id); let cur = 0; const step = Math.max(1, Math.floor(target / 30)); const iv = setInterval(() => { cur = Math.min(cur + step, target); el.textContent = cur + suffix; if (cur >= target) clearTimeout(iv); }, 35); }
-  const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { animStat("stat-mentores", 42); animStat("stat-mentees", 156); animStat("stat-escuelas", 18); animStat("stat-satis", 4.8, "/5"); obs.disconnect(); } }); }, { threshold: 0.3 });
+  const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { animStat("stat-mentores", 0); animStat("stat-mentees", 0); animStat("stat-escuelas", 0); animStat("stat-satis", 0, "/5"); obs.disconnect(); } }); }, { threshold: 0.3 });
   obs.observe($("#view-mentores .mentor-stats"));
 }
 
