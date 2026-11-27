@@ -814,10 +814,6 @@ const FACULTADES = [
   { id: "fcm", sigla: "FCM", nombre: "Ciencias Matemáticas", escuelas: ["Matemática", "Estadística", "Investigación Operativa", "Computación Científica"] },
   { id: "fcf", sigla: "FCF", nombre: "Ciencias Físicas", escuelas: ["Física", "Ingeniería Mecánica de Fluidos", "Geofísica"] },
   { id: "fcb", sigla: "FCB", nombre: "Ciencias Biológicas", escuelas: ["Ciencias Biológicas", "Genética y Biotecnología", "Microbiología y Parasitología"] },
-  { id: "fm", sigla: "FM", nombre: "Medicina", escuelas: ["Medicina Humana", "Enfermería", "Obstetricia", "Nutrición", "Tecnología Médica"] },
-  { id: "ffb", sigla: "FFB", nombre: "Farmacia y Bioquímica", escuelas: ["Farmacia y Bioquímica", "Ciencia de los Alimentos", "Toxicología"] },
-  { id: "fo", sigla: "FO", nombre: "Odontología", escuelas: ["Odontología"] },
-  { id: "fmv", sigla: "FMV", nombre: "Medicina Veterinaria", escuelas: ["Medicina Veterinaria"] },
   { id: "fpsi", sigla: "FPSI", nombre: "Psicología", escuelas: ["Psicología", "Psicología Organizacional y de la Gestión Humana"] },
   { id: "fca", sigla: "FCA", nombre: "Ciencias Administrativas", escuelas: ["Administración", "Administración de Turismo", "Administración de Negocios Internacionales", "Marketing", "Gastronomía", "Administración de Negocios Marítimos y Portuarios"] },
   { id: "fcc", sigla: "FCC", nombre: "Ciencias Contables", escuelas: ["Contabilidad", "Gestión Tributaria", "Auditoría Empresarial y del Sector Público"] },
@@ -829,9 +825,10 @@ const FACULTADES = [
 ];
 
 const COD_FAC = {
-  "20": 0, "19": 1, "18": 2, "17": 3, "16": 4, "15": 5, "14": 6, "13": 7,
-  "02": 8, "04": 9, "03": 10, "21": 11, "12": 12, "10": 13, "11": 14,
-  "09": 15, "08": 16, "05": 17, "06": 18, "07": 19
+  "20": "fisi", "19": "fiee", "18": "fii", "17": "figmmg", "16": "fqiq",
+  "15": "fcm", "14": "fcf", "13": "fcb", "02": "fpsi", "04": "fca",
+  "03": "fcc", "21": "fce", "12": "fcs", "10": "fdcp", "11": "fe",
+  "09": "flch"
 };
 
 function parseCodigo() {
@@ -843,9 +840,9 @@ function parseCodigo() {
   const anioCorto = inp.slice(0, 2);
   const anio = (+anioCorto < 50 ? 2000 : 1900) + +anioCorto;
   const facCode = inp.slice(2, 4);
-  const idx = COD_FAC[facCode];
-  if (idx === undefined) { err.textContent = "No se reconoce el código de facultad (" + facCode + "). Verifica tu código."; err.classList.add("show"); return; }
-  const fac = FACULTADES[idx];
+  const facId = COD_FAC[facCode];
+  const fac = FACULTADES.find(f => f.id === facId);
+  if (!fac) { err.textContent = "No se reconoce el código de facultad (" + facCode + "). Verifica tu código."; err.classList.add("show"); return; }
   let escIdx = 0;
   if (inp.length >= 9) escIdx = Math.min(+inp[4], fac.escuelas.length - 1);
   const esc = fac.escuelas[escIdx] || fac.escuelas[0];
@@ -862,20 +859,31 @@ try { const saved = JSON.parse(localStorage.getItem("rc-cod")); if (saved && sav
 document.getElementById("cod-input").addEventListener("keydown", function(e) { if (e.key === "Enter") parseCodigo(); });
 
 const MATERIAL = {
+  "Ingeniería de Sistemas": [
+    { curso: "Cálculo I", profesor: "Docente E", archivos: [["practicas","Prácticas calificadas",5],["semanal","Material de clase",12],["examenes","Parciales y finales anteriores",3]] },
+    { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] },
+    { curso: "Física I", profesor: "Docente F", archivos: [["practicas","Problemas resueltos",15],["examenes","Parciales anteriores",3]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",18],["examenes","Exámenes anteriores",2]] },
+    { curso: "Redacción y Comunicación", profesor: "Docente D", archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] }
+  ],
   "Ingeniería de Software": [
     { curso: "Cálculo I", profesor: "Docente A", archivos: [["practicas","Prácticas calificadas",6],["semanal","Diapositivas por semana",14],["examenes","Parciales y finales anteriores",4]] },
     { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] },
     { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",20],["examenes","Exámenes de aplazados",2]] },
-    { curso: "Redacción y Comunicación", profesor: "Docente D", archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] }
-  ],
-  "Ingeniería de Sistemas": [
-    { curso: "Cálculo I", profesor: "Docente E", archivos: [["practicas","Prácticas calificadas",5],["examenes","Parciales anteriores",3]] },
-    { curso: "Física I", profesor: "Docente F", archivos: [["practicas","Problemas resueltos",15],["examenes","Parciales anteriores",3]] },
-    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",18]] }
+    { curso: "Redacción y Comunicación", profesor: "Docente D", archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] },
+    { curso: "Fundamentos de Software", profesor: "Docente H", archivos: [["semanal","Material de clase",10],["practicas","Ejercicios resueltos",7]] }
   ],
   "Ciencia de la Computación": [
     { curso: "Matemática Discreta", profesor: "Docente G", archivos: [["semanal","Material de clase",10],["practicas","Ejercicios resueltos",7]] },
-    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["examenes","Exámenes anteriores",2]] }
+    { curso: "Cálculo I", profesor: "Docente A", archivos: [["practicas","Prácticas calificadas",6],["examenes","Parciales anteriores",3]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["examenes","Exámenes anteriores",2]] },
+    { curso: "Álgebra y Geometría Analítica", profesor: "Docente B", archivos: [["practicas","Prácticas dirigidas",8],["examenes","Sustitutorios anteriores",2]] }
+  ],
+  "Ingeniería de Inteligencia Artificial": [
+    { curso: "Cálculo I", profesor: "Docente A", archivos: [["practicas","Prácticas calificadas",6],["semanal","Material de clase",10],["examenes","Parciales anteriores",3]] },
+    { curso: "Introducción a la Programación", profesor: "Docente C", archivos: [["semanal","Laboratorios semanales",12],["practicas","Ejercicios resueltos",15]] },
+    { curso: "Matemática Discreta", profesor: "Docente G", archivos: [["semanal","Material de clase",10],["practicas","Ejercicios resueltos",7]] },
+    { curso: "Redacción y Comunicación", profesor: "Docente D", archivos: [["semanal","Guías de redacción",9],["examenes","Evaluaciones anteriores",3]] }
   ]
 };
 
@@ -1056,7 +1064,7 @@ const INDICE = [
   { t: "Postular como mentor", s: "Ayuda a los cachimbos y obtén constancia y horas de labor social", tag: "Mentores", href: "#mentores" },
   { t: "Beneficios del programa de mentores", s: "Constancias, insignias, horas de voluntariado", tag: "Mentores", href: "#mentores" }
 ];
-const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 $("#q").addEventListener("input", e => {
   const q = norm(e.target.value.trim());
   const box = $("#results");
