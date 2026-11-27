@@ -400,7 +400,6 @@
   }
   .shift-card b { display: block; font-size: 15px; font-weight: 800; color: var(--c-yellow); margin-bottom: 4px; }
   .shift-card span { font-size: 13.5px; color: var(--ink); font-weight: 600; }
-  .shift-card small { display: block; font-size: 12px; color: var(--ink-2); margin-top: 4px; }
   .back-btn {
     background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2);
     padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 700; margin-top: 16px;
@@ -941,7 +940,7 @@ const GUIAS = [
 ];
 
 const SERVICIOS = [
-  { id: "transporte", titulo: "Transporte gratuito", ico: "bus", texto: "El Burro externo conecta el campus con distintas zonas de Lima, y el Burro interno recorre el perímetro interno con varios paraderos." },
+  { id: "transporte", titulo: "Transporte gratuito", ico: "bus", texto: "El Burro externo conecta el campus con distintas zonas de Lima, y el Burro interno recorre el perímetro interno con paraderos enumerados." },
   { id: "comedor", titulo: "Comedor universitario", ico: "food", texto: "Es gratuito. Se recoge ticket para desayuno, almuerzo y cena por orden de llegada, así que conviene llegar temprano." },
   { id: "biblioteca", titulo: "Bibliotecas", ico: "book", texto: "Como la Biblioteca Central Pedro Zulen. Para ingresar necesitas tu carné de biblioteca; aquí se explicaría cómo obtenerlo." },
   { id: "deporte", titulo: "Deportes y actividades", ico: "ball", texto: "Hay equipos deportivos y actividades estudiantiles a los que puedes unirte para integrarte y conocer gente." },
@@ -953,38 +952,52 @@ const RUTAS_EXTERNO = {
     nombre: "Ruta Este",
     img: "paradero-este.png",
     turnos: [
-      { nombre: "Turno Mañana", horario: "6:00 am - 9:00 am" },
-      { nombre: "Turno Tarde", horario: "12:00 pm - 3:00 pm" },
-      { nombre: "Turno Noche", horario: "6:00 pm - 10:00 pm" }
-    ]
-  },
-  "oeste": {
-    nombre: "Ruta Oeste",
-    img: "paradero-oeste.png",
-    turnos: [
-      { nombre: "Turno Mañana", horario: "6:00 am - 9:00 am" },
-      { nombre: "Turno Tarde", horario: "12:00 pm - 3:00 pm" },
-      { nombre: "Turno Noche", horario: "6:00 pm - 10:00 pm" }
-    ]
-  },
-  "norte": {
-    nombre: "Ruta Norte",
-    img: "paradero-norte.png",
-    turnos: [
-      { nombre: "Turno Mañana", horario: "6:00 am - 9:00 am" },
-      { nombre: "Turno Tarde", horario: "12:00 pm - 3:00 pm" },
-      { nombre: "Turno Noche", horario: "6:00 pm - 10:00 pm" }
+      { nombre: "Mañana", horario: "6:00 am - 9:00 am" },
+      { nombre: "Tarde", horario: "12:00 pm - 3:00 pm" },
+      { nombre: "Noche", horario: "6:00 pm - 10:00 pm" }
     ]
   },
   "sur": {
     nombre: "Ruta Sur",
     img: "paradero-sur.png",
     turnos: [
-      { nombre: "Turno Mañana", horario: "6:00 am - 9:00 am" },
-      { nombre: "Turno Tarde", horario: "12:00 pm - 3:00 pm" },
-      { nombre: "Turno Noche", horario: "6:00 pm - 10:00 pm" }
+      { nombre: "Mañana", horario: "6:00 am - 9:00 am" },
+      { nombre: "Tarde", horario: "12:00 pm - 3:00 pm" },
+      { nombre: "Noche", horario: "6:00 pm - 10:00 pm" }
+    ]
+  },
+  "centro": {
+    nombre: "Ruta Centro",
+    img: "paradero-centro.png",
+    turnos: [
+      { nombre: "Mañana", horario: "6:00 am - 9:00 am" },
+      { nombre: "Tarde", horario: "12:00 pm - 3:00 pm" },
+      { nombre: "Noche", horario: "6:00 pm - 10:00 pm" }
+    ]
+  },
+  "norte": {
+    nombre: "Ruta Norte",
+    img: "paradero-norte.png",
+    turnos: [
+      { nombre: "Mañana", horario: "6:00 am - 9:00 am" },
+      { nombre: "Tarde", horario: "12:00 pm - 3:00 pm" },
+      { nombre: "Noche", horario: "6:00 pm - 10:00 pm" }
     ]
   }
+};
+
+const BURRO_INTERNO = {
+  img: "burro-interno.png",
+  paraderos: [
+    "Puerta 1 (Av. Venezuela)",
+    "Puerta 2 y 3 (Av. Universitaria)",
+    "Facultades FII, FCF, FCM y FCB",
+    "Facultad FIGMMG",
+    "Comedor Universitario",
+    "Puerta 6 y 7 (Calle Germán Amézaga)",
+    "Zona FISI, PSICO, ODONTO y FIC",
+    "Estadio y Sede Central"
+  ]
 };
 
 const SESIONES = [
@@ -1101,7 +1114,6 @@ function updateProg(id) {
 }
 
 /* ===== Campus Dinámico ===== */
-const panelMapa = document.getElementById('panel-mapa');
 const mapPanelContainer = document.getElementById('map-panel');
 
 function resetPanelMap() {
@@ -1122,7 +1134,6 @@ function handleServiceClick(id) {
   if (id === 'transporte') {
     showTransportMenu();
   } else if (id === 'comedor' || id === 'biblioteca' || id === 'deporte' || id === 'tramites') {
-    // Si hacen clic en otros servicios, mostramos el mapa y un mensaje
     mapPanelContainer.innerHTML = `
       <div class="coming-soon">
         <h4>Próximamente</h4>
@@ -1134,6 +1145,26 @@ function handleServiceClick(id) {
 
 function showTransportMenu() {
   mapPanelContainer.innerHTML = `
+    <h3 class="panel-title">🚌 Transporte gratuito</h3>
+    <p style="color:var(--ink-2);font-size:14px;margin-bottom:16px;">Elige el tipo de burro para ver su información.</p>
+    
+    <div class="routes-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:16px;">
+      <button class="route-btn" onclick="showBurroExternoMenu()" style="border-color: var(--c-yellow);">
+        <b>Burro Externo</b>
+        <span>Rutas Este, Sur, Centro y Norte</span>
+      </button>
+      <button class="route-btn" onclick="showBurroInterno()" style="border-color: var(--c-cyan);">
+        <b>Burro Interno</b>
+        <span>Recorrido por el campus</span>
+      </button>
+    </div>
+    <button class="back-btn" onclick="resetPanelMap()">Volver al mapa</button>
+  `;
+}
+
+function showBurroExternoMenu() {
+  mapPanelContainer.innerHTML = `
+    <button class="back-btn" onclick="showTransportMenu()" style="margin-bottom:16px;">← Volver</button>
     <h3 class="panel-title">🚌 Burro Externo</h3>
     <p style="color:var(--ink-2);font-size:14px;margin-bottom:16px;">Selecciona tu ruta para ver los paraderos y horarios.</p>
     <div class="routes-grid">
@@ -1144,14 +1175,13 @@ function showTransportMenu() {
         </button>
       `).join('')}
     </div>
-    <button class="back-btn" onclick="resetPanelMap()">Volver al mapa</button>
   `;
 }
 
 function showRouteDetail(rutaKey) {
   const ruta = RUTAS_EXTERNO[rutaKey];
   mapPanelContainer.innerHTML = `
-    <button class="back-btn" onclick="showTransportMenu()" style="margin-bottom:16px;">← Volver a rutas</button>
+    <button class="back-btn" onclick="showBurroExternoMenu()" style="margin-bottom:16px;">← Volver a rutas</button>
     <h3 class="panel-title" style="margin-bottom:4px;">${ruta.nombre}</h3>
     <p style="color:var(--ink-2);font-size:13px;margin-bottom:16px;">Paradero principal (imagen referencial)</p>
     
@@ -1161,11 +1191,31 @@ function showRouteDetail(rutaKey) {
     <div class="shift-container">
       ${ruta.turnos.map(t => `
         <div class="shift-card">
-          <b>${t.nombre.replace('Turno ', '')}</b>
+          <b>${t.nombre}</b>
           <span>${t.horario}</span>
         </div>
       `).join('')}
     </div>
+  `;
+}
+
+function showBurroInterno() {
+  mapPanelContainer.innerHTML = `
+    <button class="back-btn" onclick="showTransportMenu()" style="margin-bottom:16px;">← Volver</button>
+    <h3 class="panel-title" style="color:var(--c-cyan);">🚐 Burro Interno</h3>
+    <p style="color:var(--ink-2);font-size:13px;margin-bottom:16px;">Recorrido por el perímetro del campus.</p>
+    
+    <img src="${BURRO_INTERNO.img}" alt="Recorrido del Burro Interno" style="width:100%;border-radius:16px;margin-bottom:16px;border:1px solid var(--line);">
+    
+    <h4 style="color:var(--ink);font-size:16px;margin-bottom:12px;">📍 Paraderos</h4>
+    <ol style="list-style:none;margin:0;padding:0;display:grid;gap:8px;">
+      ${BURRO_INTERNO.paraderos.map((p, i) => `
+        <li style="display:flex;gap:12px;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:12px;padding:10px 14px;">
+          <span style="display:grid;place-items:center;width:28px;height:28px;border-radius:999px;background:linear-gradient(135deg,var(--c-cyan),var(--c-cyan-2));color:#0a0a10;font-weight:900;font-size:13px;flex:none;">${i + 1}</span>
+          <span style="font-size:14px;color:var(--ink);font-weight:500;">${p}</span>
+        </li>
+      `).join("")}
+    </ol>
   `;
 }
 
