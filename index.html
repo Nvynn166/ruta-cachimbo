@@ -616,6 +616,9 @@
 
   :focus-visible { outline: 2px solid var(--c-cyan); outline-offset: 2px; }
   .pin:focus:not(:focus-visible) { outline: none; }
+
+  /* Estilos extra para tarjetas de anuncios */
+  .anuncio-card img { width: 100%; border-radius: 12px; margin-bottom: 12px; display: block; object-fit: cover; }
 </style>
 </head>
 <body>
@@ -633,7 +636,7 @@
       <a href="#academico">Académico</a>
       <a href="#tramites">Trámites y guías</a>
       <a href="#campus">Campus</a>
-      <a href="#comunidad">Comunidad</a>
+      <a href="#anuncios">Anuncios</a>
       <a href="#mentores">Mentores</a>
     </nav>
   </div>
@@ -699,10 +702,10 @@
         <h3>Campus y servicios</h3>
         <p>Mapa, transporte, comedor, bibliotecas y actividades deportivas.</p>
       </a>
-      <a class="card axis acc-green" href="#comunidad">
-        <span class="emoji">🤝</span>
-        <h3>Apoyo y comunidad</h3>
-        <p>Clases de reforzamiento con reserva de cupo y actividades de integración.</p>
+      <a class="card axis acc-green" href="#anuncios">
+        <span class="emoji">📢</span>
+        <h3>Anuncios y campañas</h3>
+        <p>Campañas de salud, torneos, ferias y avisos oficiales de la UNMSM.</p>
       </a>
       <a class="card axis acc-purple" href="#mentores">
         <span class="emoji">🌟</span>
@@ -728,6 +731,13 @@
     </div>
     <nav class="crumbs" id="crumbs" aria-label="Ruta de navegación"></nav>
     <div id="acad"></div>
+
+    <!-- Reforzamientos movidos a Académico -->
+    <div class="page-head" style="margin-top: 48px; border-top: 1px dashed var(--line); padding-top: 32px;">
+      <h3 style="color:var(--c-cyan); font-size: 14px; margin-bottom: 8px;">💪 Clases de reforzamiento</h3>
+      <p style="margin-bottom: 16px;">Organizadas por grupos de ayuda académica. Reserva tu cupo antes de prácticas y exámenes.</p>
+    </div>
+    <div class="sessions" id="sessions"></div>
   </section>
 
   <!-- TRÁMITES Y GUÍAS -->
@@ -758,23 +768,73 @@
     </div>
   </section>
 
-  <!-- COMUNIDAD -->
-  <section class="view acc-green" id="view-comunidad" aria-labelledby="t-com">
+  <!-- ANUNCIOS -->
+  <section class="view acc-green" id="view-anuncios" aria-labelledby="t-anuncios">
     <div class="page-head">
-      <span class="eyebrow" style="color:var(--c-green)">Eje 4 🤝</span>
-      <h2 id="t-com" style="color:var(--c-green)">Apoyo académico y comunidad</h2>
-      <p>Clases de reforzamiento organizadas por grupos de ayuda académica. Reserva tu cupo antes de prácticas y exámenes.</p>
+      <span class="eyebrow" style="color:var(--c-green)">Mural oficial 🗞️</span>
+      <h2 id="t-anuncios" style="color:var(--c-green)">Anuncios y campañas</h2>
+      <p>Entérate de las campañas de salud, ferias, torneos y actividades organizadas por la UNMSM y tus delegados.</p>
     </div>
-    <div class="two">
-      <div class="sessions" id="sessions"></div>
-      <aside class="card news">
-        <h3>📢 Anuncios</h3>
-        <ul>
-          <li><b>Torneo de integración de cachimbos</b><span>Inscripciones por escuela. Más detalles con tus delegados.</span></li>
-          <li><b>Recorrido guiado por el campus</b><span>Para quienes no pudieron asistir en la inducción.</span></li>
-          <li><b>Convocatoria a equipos deportivos</b><span>Fútbol, vóley, básquet y más. Pregunta en la zona deportiva.</span></li>
-        </ul>
-      </aside>
+
+    <div class="mentor-grid">
+      <!-- Tarjeta 1: Exámenes Médicos -->
+      <div class="card mentor-card anuncio-card" style="border-color: rgba(168,85,247,0.4);">
+        <div class="mentor-ico" style="background: linear-gradient(135deg, #a855f7, #c084fc);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s-6 8.5-6 13a6 6 0 1 0 12 0c0-4.5-6-13-6-13z"/></svg>
+        </div>
+        <h3 style="color:var(--c-purple)">🩺 Evaluaciones Médicas 2026</h3>
+        <!-- IMAGEN DE EXÁMENES MÉDICOS -->
+        <img src="examenes-medicos.png" alt="Evaluaciones Médicas 2026">
+        <p style="color:var(--ink-2);font-size:14.5px;margin:0;font-family:'Inter',sans-serif;">
+          Jornadas para <strong>rezagados de todas las facultades</strong>. Incluye triaje, laboratorio, psicología, odontología y rayos X.
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+          <span class="tag" style="background:rgba(168,85,247,0.15); color:var(--c-purple); border-color:rgba(168,85,247,0.3);">📅 Sábado 14 de nov</span>
+          <span class="tag" style="background:rgba(168,85,247,0.15); color:var(--c-purple); border-color:rgba(168,85,247,0.3);">⏰ 08:00 - 12:30 / 14:00 - 18:00</span>
+          <span class="tag" style="background:rgba(168,85,247,0.15); color:var(--c-purple); border-color:rgba(168,85,247,0.3);">📍 Clínica Universitaria</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-top:12px; border: 1px solid var(--line);">
+          <p style="font-size:12px; margin:0; color:var(--ink-2); font-family:'Inter',sans-serif;">
+            <b>⚠️ Ojo:</b> Hemograma no requiere ayuno. Rayos X con polo claro y sin objetos metálicos (damas: top deportivo).
+          </p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: Donación de Sangre -->
+      <div class="card mentor-card anuncio-card" style="border-color: rgba(251,113,133,0.4);">
+        <div class="mentor-ico" style="background: linear-gradient(135deg, #fb7185, #f87171);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s-6 8.5-6 13a6 6 0 1 0 12 0c0-4.5-6-13-6-13z"/></svg>
+        </div>
+        <h3 style="color:var(--c-red)">🩸 Campaña de Donación de Sangre</h3>
+        <!-- IMAGEN DE DONACIÓN DE SANGRE -->
+        <img src="campana-sangre.png" alt="Campaña de Donación de Sangre">
+        <p style="color:var(--ink-2);font-size:14.5px;margin:0;font-family:'Inter',sans-serif;">
+          La Clínica Universitaria San Marcos te invita a sumarte. ¡Dona vida y ayuda a otros sanmarquinos!
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+          <span class="tag" style="background:rgba(251,113,133,0.15); color:var(--c-red); border-color:rgba(251,113,133,0.3);">📅 Hoy</span>
+          <span class="tag" style="background:rgba(251,113,133,0.15); color:var(--c-red); border-color:rgba(251,113,133,0.3);">⏰ 09:00 - 17:00</span>
+          <span class="tag" style="background:rgba(251,113,133,0.15); color:var(--c-red); border-color:rgba(251,113,133,0.3);">📍 Explanada del Comedor</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Jornada para Rezagados Base 2026 -->
+      <div class="card mentor-card anuncio-card" style="border-color: rgba(250,204,21,0.4);">
+        <div class="mentor-ico accent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 style="color:var(--c-yellow)">🏥 Rezagados Base 2026</h3>
+        <!-- IMAGEN DE REZAGADOS 2026 -->
+        <img src="rezagados-2026.png" alt="Jornada de Rezagados 2026">
+        <p style="color:var(--ink-2);font-size:14.5px;margin:0;font-family:'Inter',sans-serif;">
+          Últimas fechas para las facultades de Administración, Industrial, Educación, Matemáticas, Letras y Contables.
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+          <span class="tag" style="background:rgba(250,204,21,0.15); color:var(--c-yellow); border-color:rgba(250,204,21,0.3);">📅 25 y 26 de nov</span>
+          <span class="tag" style="background:rgba(250,204,21,0.15); color:var(--c-yellow); border-color:rgba(250,204,21,0.3);">⏰ 08:00 - 16:00</span>
+          <span class="tag" style="background:rgba(250,204,21,0.15); color:var(--c-yellow); border-color:rgba(250,204,21,0.3);">📍 Clínica Universitaria</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -886,9 +946,9 @@
 <nav class="bottom" aria-label="Secciones">
   <a href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>Inicio</a>
   <a href="#academico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/></svg>Académico</a>
-  <a href="#tramites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>Trámites y guías</a>
+  <a href="#tramites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></svg>Trámites</a>
   <a href="#campus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>Campus</a>
-  <a href="#comunidad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/></svg>Comunidad</a>
+  <a href="#anuncios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8v18L3 13v-2z"/><path d="M11 13v4a2 2 0 0 0 2 2h1"/></svg>Anuncios</a>
   <a href="#mentores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><path d="M7 21v-2a4 4 0 0 1 3-3.87"/><circle cx="12" cy="7" r="4"/><path d="m15 11 2 2 4-4"/></svg>Mentores</a>
 </nav>
 
@@ -997,122 +1057,15 @@ const MATERIAL = {
 };
 
 const GUIAS = [
-  /* ===== PRIMEROS PASOS (ANTES DE TRÁMITES) ===== */
-  {
-    id: "recojo-constancia",
-    categoria: "primeros-pasos",
-    titulo: "Recojo de constancia de ingreso",
-    desc: "Lo primero que debes hacer al saber que ingresaste.",
-    pasos: [
-      ["Revisa tu resultado oficial", "Consulta la lista de ingresantes en el portal de la UNMSM o en el comunicado de tu facultad."],
-      ["Verifica tu área (A, B, C, D o E)", "La constancia se entrega por áreas y en horarios específicos. Ubica la tuya en el cronograma oficial."],
-      ["Reúne los documentos requeridos", "DNI, voucher de pago o comprobante de ingreso, y lo que indique la convocatoria."],
-      ["Acude en el horario y lugar indicado", "Respeta el día y la hora asignados a tu área para evitar aglomeraciones."],
-      ["Guarda tu constancia en un lugar seguro", "La necesitarás para matrícula, carné y otros trámites posteriores."]
-    ]
-  },
-  {
-    id: "horarios-areas",
-    categoria: "primeros-pasos",
-    titulo: "Horarios por área (A, B, C, D, E)",
-    desc: "Cronograma de atención según tu área de ingreso.",
-    pasos: [
-      ["Identifica tu área de ingreso", "Aparece en tu resultado o en la constancia. Ej.: Área A (Ingenierías), B (Ciencias de la Salud), C (Ciencias Sociales), D (Humanidades), E (Económicas)."],
-      ["Consulta el cronograma oficial", "La UNMSM publica fechas y horarios por área para el recojo de constancias y otros procesos."],
-      ["Anota tu día y horario", "Cada área tiene días específicos. Si no puedes asistir, consulta cómo reprogramar."],
-      ["Llega con anticipación", "Se recomienda llegar 15–20 minutos antes para ubicar el módulo correcto."],
-      ["Confirma cambios de último minuto", "Revisa las redes oficiales de tu facultad por si hay modificaciones de horario."]
-    ]
-  },
-  /* ===== ACCESOS BASE ===== */
-  {
-    id: "sum",
-    categoria: "accesos",
-    titulo: "Acceso al SUM (primera vez)",
-    desc: "Activa tu cuenta y revisa tus datos.",
-    pasos: [
-      ["Ten a la mano tu código de estudiante", "Lo recibes al completar tu proceso de ingreso."],
-      ["Ingresa al portal del SUM", "Usa el enlace oficial que comparte tu facultad."],
-      ["Cambia tu contraseña inicial", "Guárdala en un lugar seguro."],
-      ["Revisa tus cursos y horario", "Verifica que coincidan con lo que te indicó tu escuela."]
-    ]
-  },
-  {
-    id: "cambio-password",
-    categoria: "accesos",
-    titulo: "Cambio de contraseña y seguridad",
-    desc: "Protege tu cuenta desde el primer día.",
-    pasos: [
-      ["Ingresa al portal de tu cuenta", "Puede ser SUM, MAT o el portal general de la UNMSM."],
-      ["Ubica la opción 'Cambiar contraseña'", "Suele estar en el perfil o configuración de seguridad."],
-      ["Usa una contraseña distinta a la inicial", "Combina mayúsculas, números y símbolos."],
-      ["No la compartas con nadie", "Ni con compañeros ni con terceros."],
-      ["Activa la verificación en dos pasos si está disponible", "Añade una capa extra de seguridad."]
-    ]
-  },
-  {
-    id: "mat",
-    categoria: "accesos",
-    titulo: "Acceso al MAT",
-    desc: "Módulo de Atención de Trámites: mesa de partes en línea.",
-    pasos: [
-      ["¿Qué es el MAT?", "Es la plataforma virtual de la UNMSM para presentar, actualizar, anular y hacer seguimiento de trámites administrativos y académicos sin ir presencialmente."],
-      ["Ingresa con tu código y contraseña", "Usa las credenciales de tu cuenta universitaria."],
-      ["Explora el menú de trámites disponibles", "Verás opciones como constancias, matrícula, récords, etc."],
-      ["Presenta tu solicitud", "Adjunta los documentos que pida cada trámite."],
-      ["Haz seguimiento en línea", "Puedes ver el estado: pendiente, en revisión, observado o aprobado."]
-    ]
-  },
-  {
-    id: "san-market",
-    categoria: "accesos",
-    titulo: "Acceso a SAN MARKET",
-    desc: "Plataforma de servicios y pagos universitarios.",
-    pasos: [
-      ["¿Qué es SAN MARKET?", "Es el portal donde realizas pagos y consultas de servicios de la UNMSM (carné, constancias, derechos, etc.)."],
-      ["Ingresa con tu código de estudiante", "Usa las mismas credenciales de tu cuenta universitaria."],
-      ["Selecciona el servicio o pago", "Cada trámite tiene un código y monto asociado."],
-      ["Realiza el pago en línea o imprime el voucher", "Según el medio habilitado (banco, agente, etc.)."],
-      ["Guarda tu comprobante", "Lo necesitarás como constancia para el trámite correspondiente."]
-    ]
-  },
-  /* ===== TRÁMITES ESPECÍFICOS ===== */
-  {
-    id: "carne",
-    categoria: "tramites",
-    titulo: "Cómo obtener tu carné universitario",
-    desc: "Requisitos, pago y recojo del carné.",
-    pasos: [
-      ["Verifica que ya tengas tu código y constancia de ingreso", "Son requisitos previos para el carné."],
-      ["Realiza el pago correspondiente", "Se hace a través de SAN MARKET o en el banco indicado."],
-      ["Registra tu solicitud en el MAT", "Adjunta tu foto, DNI y comprobante de pago."],
-      ["Espera la aprobación y el aviso de recojo", "Revisa el estado en el MAT."],
-      ["Recoge tu carné en la oficina indicada", "Lleva tu DNI y tu constancia de pago."]
-    ]
-  },
-  {
-    id: "matricula",
-    categoria: "tramites",
-    titulo: "Matrícula del siguiente ciclo",
-    desc: "Lo que debes revisar antes y durante la matrícula.",
-    pasos: [
-      ["Revisa el calendario académico", "Anota las fechas de matrícula de tu escuela."],
-      ["Consulta tus notas finales", "Confirma qué cursos aprobaste."],
-      ["Arma tu horario tentativo", "Revisa los cursos que te tocan según tu plan de estudios."],
-      ["Matricúlate en las fechas indicadas", "Si tienes problemas, acude a la oficina de tu escuela."]
-    ]
-  },
-  {
-    id: "sustitutorio",
-    categoria: "tramites",
-    titulo: "Exámenes sustitutorios y de aplazados",
-    desc: "Qué son y cómo se solicitan.",
-    pasos: [
-      ["Infórmate de las reglas de tu curso", "Cada curso indica en el sílabo si hay sustitutorio."],
-      ["Revisa las fechas publicadas", "Suelen anunciarse al final del ciclo."],
-      ["Realiza la solicitud o el pago, si corresponde", "Pregunta en tu escuela por el procedimiento vigente."]
-    ]
-  }
+  { id: "recojo-constancia", categoria: "primeros-pasos", titulo: "Recojo de constancia de ingreso", desc: "Lo primero que debes hacer al saber que ingresaste.", pasos: [["Revisa tu resultado oficial", "Consulta la lista de ingresantes en el portal de la UNMSM o en el comunicado de tu facultad."], ["Verifica tu área (A, B, C, D o E)", "La constancia se entrega por áreas y en horarios específicos. Ubica la tuya en el cronograma oficial."], ["Reúne los documentos requeridos", "DNI, voucher de pago o comprobante de ingreso, y lo que indique la convocatoria."], ["Acude en el horario y lugar indicado", "Respeta el día y la hora asignados a tu área para evitar aglomeraciones."], ["Guarda tu constancia en un lugar seguro", "La necesitarás para matrícula, carné y otros trámites posteriores."]] },
+  { id: "horarios-areas", categoria: "primeros-pasos", titulo: "Horarios por área (A, B, C, D, E)", desc: "Cronograma de atención según tu área de ingreso.", pasos: [["Identifica tu área de ingreso", "Aparece en tu resultado o en la constancia. Ej.: Área A (Ingenierías), B (Ciencias de la Salud), C (Ciencias Sociales), D (Humanidades), E (Económicas)."], ["Consulta el cronograma oficial", "La UNMSM publica fechas y horarios por área para el recojo de constancias y otros procesos."], ["Anota tu día y horario", "Cada área tiene días específicos. Si no puedes asistir, consulta cómo reprogramar."], ["Llega con anticipación", "Se recomienda llegar 15–20 minutos antes para ubicar el módulo correcto."], ["Confirma cambios de último minuto", "Revisa las redes oficiales de tu facultad por si hay modificaciones de horario."]] },
+  { id: "sum", categoria: "accesos", titulo: "Acceso al SUM (primera vez)", desc: "Activa tu cuenta y revisa tus datos.", pasos: [["Ten a la mano tu código de estudiante", "Lo recibes al completar tu proceso de ingreso."], ["Ingresa al portal del SUM", "Usa el enlace oficial que comparte tu facultad."], ["Cambia tu contraseña inicial", "Guárdala en un lugar seguro."], ["Revisa tus cursos y horario", "Verifica que coincidan con lo que te indicó tu escuela."]] },
+  { id: "cambio-password", categoria: "accesos", titulo: "Cambio de contraseña y seguridad", desc: "Protege tu cuenta desde el primer día.", pasos: [["Ingresa al portal de tu cuenta", "Puede ser SUM, MAT o el portal general de la UNMSM."], ["Ubica la opción 'Cambiar contraseña'", "Suele estar en el perfil o configuración de seguridad."], ["Usa una contraseña distinta a la inicial", "Combina mayúsculas, números y símbolos."], ["No la compartas con nadie", "Ni con compañeros ni con terceros."], ["Activa la verificación en dos pasos si está disponible", "Añade una capa extra de seguridad."]] },
+  { id: "mat", categoria: "accesos", titulo: "Acceso al MAT", desc: "Módulo de Atención de Trámites: mesa de partes en línea.", pasos: [["¿Qué es el MAT?", "Es la plataforma virtual de la UNMSM para presentar, actualizar, anular y hacer seguimiento de trámites administrativos y académicos sin ir presencialmente."], ["Ingresa con tu código y contraseña", "Usa las credenciales de tu cuenta universitaria."], ["Explora el menú de trámites disponibles", "Verás opciones como constancias, matrícula, récords, etc."], ["Presenta tu solicitud", "Adjunta los documentos que pida cada trámite."], ["Haz seguimiento en línea", "Puedes ver el estado: pendiente, en revisión, observado o aprobado."]] },
+  { id: "san-market", categoria: "accesos", titulo: "Acceso a SAN MARKET", desc: "Plataforma de servicios y pagos universitarios.", pasos: [["¿Qué es SAN MARKET?", "Es el portal donde realizas pagos y consultas de servicios de la UNMSM (carné, constancias, derechos, etc.)."], ["Ingresa con tu código de estudiante", "Usa las mismas credenciales de tu cuenta universitaria."], ["Selecciona el servicio o pago", "Cada trámite tiene un código y monto asociado."], ["Realiza el pago en línea o imprime el voucher", "Según el medio habilitado (banco, agente, etc.)."], ["Guarda tu comprobante", "Lo necesitarás como constancia para el trámite correspondiente."]] },
+  { id: "carne", categoria: "tramites", titulo: "Cómo obtener tu carné universitario", desc: "Requisitos, pago y recojo del carné.", pasos: [["Verifica que ya tengas tu código y constancia de ingreso", "Son requisitos previos para el carné."], ["Realiza el pago correspondiente", "Se hace a través de SAN MARKET o en el banco indicado."], ["Registra tu solicitud en el MAT", "Adjunta tu foto, DNI y comprobante de pago."], ["Espera la aprobación y el aviso de recojo", "Revisa el estado en el MAT."], ["Recoge tu carné en la oficina indicada", "Lleva tu DNI y tu constancia de pago."]] },
+  { id: "matricula", categoria: "tramites", titulo: "Matrícula del siguiente ciclo", desc: "Lo que debes revisar antes y durante la matrícula.", pasos: [["Revisa el calendario académico", "Anota las fechas de matrícula de tu escuela."], ["Consulta tus notas finales", "Confirma qué cursos aprobaste."], ["Arma tu horario tentativo", "Revisa los cursos que te tocan según tu plan de estudios."], ["Matricúlate en las fechas indicadas", "Si tienes problemas, acude a la oficina de tu escuela."]] },
+  { id: "sustitutorio", categoria: "tramites", titulo: "Exámenes sustitutorios y de aplazados", desc: "Qué son y cómo se solicitan.", pasos: [["Infórmate de las reglas de tu curso", "Cada curso indica en el sílabo si hay sustitutorio."], ["Revisa las fechas publicadas", "Suelen anunciarse al final del ciclo."], ["Realiza la solicitud o el pago, si corresponde", "Pregunta en tu escuela por el procedimiento vigente."]] }
 ];
 
 const SERVICIOS = [
@@ -1163,7 +1116,7 @@ const ICONS = {
 };
 
 /* ===== Navegación ===== */
-const VIEWS = ["inicio", "academico", "tramites", "campus", "comunidad", "mentores"];
+const VIEWS = ["inicio", "academico", "tramites", "campus", "anuncios", "mentores"];
 function route() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "inicio";
   $$("section.view").forEach(s => s.classList.toggle("active", s.id === "view-" + v));
@@ -1419,7 +1372,7 @@ const INDICE = [
   ...FACULTADES.flatMap(f => f.escuelas.map(e => ({ t: e, s: "Facultad de " + f.nombre, tag: "Académico", href: "#academico", fac: f.id, esc: e }))),
   ...GUIAS.map(g => ({ t: g.titulo, s: g.desc, tag: "Trámites y guías", href: "#tramites", open: "g-" + g.id })),
   ...SERVICIOS.map(s => ({ t: s.titulo, s: s.texto.slice(0, 60) + "…", tag: "Campus", href: "#campus", sel: s.id })),
-  ...SESIONES.map(s => ({ t: "Reforzamiento: " + s.curso, s: s.tema, tag: "Comunidad", href: "#comunidad" })),
+  ...SESIONES.map(s => ({ t: "Reforzamiento: " + s.curso, s: s.tema, tag: "Comunidad", href: "#academico" })),
   { t: "Solicitar un mentor", s: "Pide acompañamiento de un estudiante de ciclos superiores", tag: "Mentores", href: "#mentores" },
   { t: "Postular como mentor", s: "Ayuda a los cachimbos y obtén constancia y horas de labor social", tag: "Mentores", href: "#mentores" },
   { t: "Beneficios del programa de mentores", s: "Constancias, insignias, horas de voluntariado", tag: "Mentores", href: "#mentores" }
