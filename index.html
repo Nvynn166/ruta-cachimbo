@@ -48,18 +48,65 @@
     position: relative;
     overflow-x: hidden;
   }
-  body::before, body::after {
-    content: ""; position: fixed; pointer-events: none; z-index: 0;
-    border-radius: 50%; filter: blur(120px); opacity: .55;
+
+  /* ===== FONDO ANIMADO CON LUCES ===== */
+  .bg-animado {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    filter: blur(80px);
   }
-  body::before {
-    width: 500px; height: 500px; top: -150px; left: -100px;
+
+  .bg-animado div {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+  }
+
+  .bg-animado div:nth-child(1) {
+    width: 600px; height: 600px; top: -10%; left: -10%;
     background: radial-gradient(circle, var(--c-purple) 0%, transparent 70%);
+    animation: flotar 8s infinite alternate ease-in-out;
   }
-  body::after {
-    width: 600px; height: 600px; bottom: -200px; right: -150px;
+
+  .bg-animado div:nth-child(2) {
+    width: 700px; height: 700px; bottom: -20%; right: -10%;
     background: radial-gradient(circle, var(--c-cyan) 0%, transparent 70%);
+    animation: flotar 12s infinite alternate-reverse ease-in-out;
+    animation-delay: -2s;
   }
+
+  .bg-animado div:nth-child(3) {
+    width: 500px; height: 500px; top: 40%; left: 30%;
+    background: radial-gradient(circle, var(--c-green) 0%, transparent 70%);
+    animation: flotar 10s infinite alternate ease-in-out;
+    animation-delay: -4s;
+  }
+
+  .bg-animado div:nth-child(4) {
+    width: 400px; height: 400px; bottom: 10%; left: 10%;
+    background: radial-gradient(circle, var(--c-yellow) 0%, transparent 70%);
+    animation: flotar 9s infinite alternate-reverse ease-in-out;
+    animation-delay: -1s;
+  }
+
+  .bg-animado div:nth-child(5) {
+    width: 450px; height: 450px; top: 10%; right: 20%;
+    background: radial-gradient(circle, var(--c-red) 0%, transparent 70%);
+    animation: flotar 11s infinite alternate ease-in-out;
+    animation-delay: -5s;
+  }
+
+  @keyframes flotar {
+    0% { transform: translate(0, 0) scale(0.8); opacity: 0.3; }
+    50% { opacity: 0.6; }
+    100% { transform: translate(40px, -40px) scale(1.2); opacity: 0.7; }
+  }
+  /* ==================================== */
+
   h1, h2, h3, h4 { 
     font-family: "Press Start 2P", monospace; 
     line-height: 1.4; 
@@ -76,6 +123,7 @@
     color: #0a0a10; font-size: 12px; text-align: center; padding: 7px 16px; font-weight: 700;
     letter-spacing: .03em;
     font-family: "Inter", sans-serif;
+    position: relative; z-index: 1;
   }
 
   header {
@@ -622,6 +670,15 @@
 </style>
 </head>
 <body>
+
+  <!-- FONDO ANIMADO -->
+  <div class="bg-animado" aria-hidden="true">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
 
 <div class="notice">Prototipo académico · No es una plataforma oficial de la UNMSM · Los contenidos son de ejemplo</div>
 
@@ -1346,7 +1403,7 @@ function showBurroInterno() {
   `;
 }
 
-/* ===== Comunidad ===== */
+/* ===== Comunidad (Sesiones de reforzamiento) ===== */
 function renderSesiones() {
   const res = store.get("reservas", {});
   $("#sessions").innerHTML = SESIONES.map(s => {
